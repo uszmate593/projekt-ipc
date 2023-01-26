@@ -1,0 +1,21 @@
+Koncepcja:
+    Jeżeli proces posiada rolę czytelnika to wchodząc do czytelni musi zmiejszyć semafor czytelni o 1 (maksymalna jego wartość to N),
+    powoduje to, że jednocześnie odczytywać może wiele procesów. Każdy proces odczytuje wiadomość ze swojej dedykowanej kolejki komunikatów bez
+    oczekiwania i jeżeli coś się na niej znalazło, to zmijsza wartość zmiennej przechowującej informacje o tym, ile procesów musi tą wiadomość 
+    odczytywać oraz skreśla ją z własnej listy do odczytu. Jeżeli odczytana wiadomość została już odczytana przez wymagane procesy to podniesiany 
+    zostaje semafor wolnych miejsc na książki o 1 (maksymalna wartość K). Na koniec semafor czytelni zostaje podniesiony o 1.
+
+    Jeżeli proces posiada rolę pisarza to wchodząc do czytelni zmiajsza semafor czytelni o N, żeby mógł tam przebywać jako jedyny. Następnie 
+    faza odczytu przebiega identycznie jak dla czytelnika z tym wyjątjiem, że na koniec semafor czytelni podnoszony jest o N. Po podniesieniu 
+    semafora następuje sprawdzenie, czy pisarz nie ma jeszcze jakichś książek do przeczytania. Jeżeli takie istnieją, to w celu uniknięcia 
+    zakleszczenia przechodzi do fazy relaksu, w przeciwnym wypadku opuszcza semafor wolnych miejsc na książki o 1 oraz semafor czytelni o N.
+    Następnie wysyła komunikat do wszystkich procesów posiadających obecnie rolę czytelnika. W przypadku kiedy żaden proces nie jest czytelnikiem
+    semafor wolnych miejsc na książki zostanie podniesiony o 1. Na koniec semafor czytelni zostaje podniesiony o N.
+
+    W trakcie relaksu, każdy proces ma 30% szans na zmiane swojej roli na przeciwną.
+
+Uruchomienie:
+    Jeżeli program został już wcześniej uruchomiony należy usunąć utworzone przez niego kolejki komunikatów.
+
+    uruchomić plik czypis.out
+

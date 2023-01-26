@@ -173,7 +173,6 @@ int main()
     {
         if(user_addr[id].role == 0)
         {
-            printf("Library user %d reader.\n", id);
             down(sem_id, 0, 1);
             read_check = msgrcv(msg_id[id], &msg_buf, sizeof(int), -shr_vars_addr[0], IPC_NOWAIT);
             if(read_check > 0)
@@ -190,7 +189,7 @@ int main()
                         {
                             book_addr[i].state = 0;
                             up(sem_id, 1, 1);
-                            printf("%d read by everyone\n", i);
+                            printf("%d read by everyone\n", book_addr[i].id);
                         }
                         up(sem_id, 2, 1);
                         break;
@@ -209,10 +208,8 @@ int main()
         }
         else
         {
-            printf("Library user %d writer.\n", id);
             down(sem_id, 0, N);
             read_check = msgrcv(msg_id[id], &msg_buf, sizeof(int), -shr_vars_addr[0], IPC_NOWAIT);
-            printf("%d\n", read_check);
             if(read_check > 0)
             {
                 read = msg_buf.mvalue;
@@ -227,7 +224,7 @@ int main()
                         {
                             book_addr[i].state = 0;
                             up(sem_id, 1, 1);
-                            printf("%d read by everyone\n", i);
+                            printf("%d read by everyone\n", book_addr[i].id);
                         }
                         up(sem_id, 2, 1);
                         break;
@@ -249,16 +246,8 @@ int main()
             {
                 if(user_addr[id].books_to_read[i] != -1)
                 {
-                    for(int j = 0;j < K;j++)
-                    {
-                        if(book_addr[j].id == user_addr[id].books_to_read[i] && book_addr[j].to_read <= shr_vars_addr[1])
-                        {
-                            decision = 1;
-                            break;
-                        }
-                        if(decision)
-                            break;
-                    }
+                    decision = 1;
+                    break;
                 }
             }
             if(decision == 0)
@@ -290,7 +279,6 @@ int main()
                             perror("Failed to send message");
                             return 1;
                         }
-                        printf("send to %d\n", i);
                         book_addr[read].to_read++;
                         for(int j = 0;j < K;j++)
                         {
@@ -307,7 +295,7 @@ int main()
                 {
                     book_addr[read].state = 0;
                     up(sem_id, 1, 1);
-                    printf("%d read by everyone\n", read);
+                    printf("%d read by everyone\n", book_addr[read].id);
                 }
                 up(sem_id, 0, N);
             }
